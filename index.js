@@ -72,6 +72,10 @@ els.btns.solve.addEventListener("click", () => {
   els.btns.resume.classList.remove("disabled");
   els.btns.reset.classList.remove("disabled");
   
+  els.status.iteration.innerText = `#0`;
+  els.status.elapsedTime.innerText = `0ms`;
+  els.status.maximumCover.innerText = `0 / 0`;
+  
   startTime = new Date().getTime();
   stopTime = new Date().getTime();
   [step, display] = solver(mainGrid, pieceList);

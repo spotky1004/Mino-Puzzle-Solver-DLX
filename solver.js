@@ -140,7 +140,8 @@ function initSets(board, pieceDatas) {
           variants.push(cur);
         }
       }
-    } else {
+    }
+    if (piece.isFlipable) {
       const origLen = variants.length;
       for (let i = 0; i < origLen; i++) {
         cur = flipPiece(variants[i]);
