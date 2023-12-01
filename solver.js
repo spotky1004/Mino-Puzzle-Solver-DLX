@@ -398,10 +398,11 @@ function* dlx(sets, pieceCountSum) {
     }
 
     if (
-      setCount % 100000 === 0 ||
+      iterCount % 100000 === 0 ||
       maxCoverCount < coveredCount ||
       coveredCount === boardCellCount
     ) {
+      maxCoverCount = Math.max(maxCoverCount, coveredCount);
       yield [coveredCount, selectedNodes, iterCount];
     }
   }
