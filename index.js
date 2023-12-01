@@ -27,7 +27,7 @@ let stopTime = 0;
 let step = null;
 let display = null;
 
-function solveLoop() {
+async function solveLoop() {
   const gridCellCount = [...mainGrid.cells.entries()].length;
   startTime += new Date().getTime() - stopTime;
 
@@ -42,6 +42,7 @@ function solveLoop() {
       return;
     }
     const [coverCount, nodes, iterCount] = result;
+    await new Promise((res) => setTimeout(() => res()));
     if (!isSolving) return;
     if (maxCover >= coverCount && gridCellCount !== coverCount) continue;
 
@@ -50,7 +51,8 @@ function solveLoop() {
     els.status.elapsedTime.innerText = `${new Date().getTime() - startTime}ms`;
     els.status.maximumCover.innerText = `${maxCover} / ${gridCellCount}`;
 
-    requestAnimationFrame(() => display(nodes));
+    display(nodes);
+    await new Promise((res) => setTimeout(() => res()));
     if (isResume || gridCellCount === coverCount) break;
   }
 
