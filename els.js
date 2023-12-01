@@ -6,6 +6,8 @@ const els = {
   /** @type {HTMLDivElement} */
   addPiece: document.getElementById("piece-list__add"),
   status: {
+    /** @type {HTMLDivElement} */
+    container: document.getElementById("solve-status"),
     /** @type {HTMLSpanElement} */
     iteration: document.getElementById("solve-status__iteration-value"),
     /** @type {HTMLSpanElement} */

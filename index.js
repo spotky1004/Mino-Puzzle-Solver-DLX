@@ -19,25 +19,85 @@ pieceList.pieces[0].count = 2;
 pieceList.pieces[0].grid.addCell(0, 0);
 pieceList.pieces[0].grid.addCell(0, 1);
 
-solver(mainGrid, pieceList);
-
 let isSolving = false;
-els.btns.solve.addEventListener("click", () => {
-  isSolving = true;
-  mainGrid.locked = true;
-  pieceList.locked = true;
+let isResume = false;
+let maxCover = 0;
+let startTime = 0;
+let stopTime = 0;
+let step = null;
+let display = null;
 
-  let maxCover = 0;
+function solveLoop() {
   const gridCellCount = [...mainGrid.cells.entries()].length;
+  startTime += new Date().getTime() - stopTime;
 
-  const [step, display] = solver(mainGrid, pieceList);
   while (true) {
     const result = step();
-    if (result === -1) break;
+    if (result === -1) {
+      isSolving = true;
+      isResume = false;
+      els.btns.solve.classList.add("disabled");
+      els.btns.resume.classList.add("disabled");
+      els.btns.reset.classList.remove("disabled");
+      return;
+    }
     const [coverCount, nodes, iterCount] = result;
-    if (maxCover >= coverCount) continue;
+    if (!isSolving) return;
+    if (maxCover >= coverCount && gridCellCount !== coverCount) continue;
 
     maxCover = coverCount;
-    display(nodes);
+    els.status.iteration.innerText = `#${iterCount}`;
+    els.status.elapsedTime.innerText = `${new Date().getTime() - startTime}ms`;
+    els.status.maximumCover.innerText = `${maxCover} / ${gridCellCount}`;
+
+    requestAnimationFrame(() => display(nodes));
+    if (isResume || gridCellCount === coverCount) break;
   }
+
+  isResume = true;
+  els.btns.solve.classList.add("disabled");
+  els.btns.resume.classList.remove("disabled");
+  els.btns.reset.classList.remove("disabled");
+  stopTime = new Date().getTime();
+}
+
+els.btns.solve.addEventListener("click", () => {
+  if (isSolving) return;
+  isSolving = true;
+  maxCover = 0;
+  mainGrid.locked = true;
+  pieceList.locked = true;
+  els.status.container.classList.remove("disabled");
+  els.btns.solve.classList.add("disabled");
+  els.btns.resume.classList.remove("disabled");
+  els.btns.reset.classList.remove("disabled");
+  
+  startTime = new Date().getTime();
+  stopTime = new Date().getTime();
+  [step, display] = solver(mainGrid, pieceList);
+  solveLoop();
+});
+
+els.btns.resume.addEventListener("click", () => {
+  if (!isResume) {
+    isResume = true;
+  } else {
+    isResume = false;
+    solveLoop();
+  }
+});
+
+els.btns.reset.addEventListener("click", () => {
+  if (!isSolving) return;
+  isSolving = false;
+  isResume = false;
+  mainGrid.locked = false;
+  pieceList.locked = false;
+
+  display([]);
+
+  els.status.container.classList.add("disabled");
+  els.btns.solve.classList.remove("disabled");
+  els.btns.resume.classList.add("disabled");
+  els.btns.reset.classList.add("disabled");
 });

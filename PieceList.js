@@ -33,8 +33,9 @@ export default class PieceList {
   }
 
   add() {
-    const color = `rgb(${Math.floor(Math.random() * 55) + 200}, ${Math.floor(Math.random() * 55) + 200}, ${Math.floor(Math.random() * 55) + 200})`;
+    const color = `rgb(${Math.floor(Math.random() * 100) + 155}, ${Math.floor(Math.random() * 100) + 155}, ${Math.floor(Math.random() * 100) + 155})`;
     const piece = new Piece(this, color);
+    piece.grid.locked = this.locked;
     this.pieces.push(piece);
     this.el.appendChild(piece.elManager.els.container);
   }

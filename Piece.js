@@ -36,6 +36,9 @@ export default class Piece {
 
   set count(value) {
     this.#count = value;
+    if (isNaN(this.#count)) this.#count = 1;
+    if (this.#count < 0) this.#count = 0;
+    if (this.#count > 10000) this.#count = 10000;
     this.elManager.update();
   }
 }

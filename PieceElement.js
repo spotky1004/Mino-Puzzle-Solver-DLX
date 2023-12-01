@@ -55,6 +55,14 @@ export default class PieceElement {
     this.els.delete.addEventListener("click", () => {
       this.parent.parent.remove(this.parent);
     });
+    this.els.countInput.addEventListener("input", () => {
+      const value = parseInt(this.els.countInput.innerText);
+      if (isNaN(value) || 0 > value || value > 10000) {
+        this.els.countInput.innerText = this.parent.count;
+        return;
+      }
+      this.parent.count = value;
+    });
   }
 
   update() {

@@ -154,12 +154,16 @@ export default class GridCanvas {
     
     ctx.strokeStyle = "#000";
     ctx.globalAlpha = 0.15;
+    if (this.parent.locked) {
+      ctx.setLineDash(GridCanvas.dotStyle);
+    } else {
+      ctx.setLineDash([]);
+    }
     ctx.lineWidth = Math.max(2, Math.min(width, height) / this.#zoom / 15);
     ctx.beginPath();
     let canvasX = this.gridPos2CanvasPos(Math.floor(x0) - 0.5, 0).x;
     for (let x = Math.floor(x0) - 1; x < x1; x++) {
       ctx.moveTo(canvasX, 0);
-      if (this.parent.locked) ctx.setLineDash(GridCanvas.dotStyle);
       ctx.lineTo(canvasX, height);
       canvasX += 1 / pixelRatio;
     }
@@ -195,12 +199,13 @@ export default class GridCanvas {
       const { x: l, y: u } = this.gridPos2CanvasPos(x - 0.5, y - 0.5);
       const { x: r, y: d } = this.gridPos2CanvasPos(x + 0.5, y + 0.5);
       
-      if (this.parent.locked) ctx.setLineDash(GridCanvas.dotStyle);
       ctx.rect(l, u, r - l, d - u);
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
 
+    const fontSize = 0.2 / pixelRatio;
+    ctx.font = `bold ${Math.ceil(fontSize)}px "Roboto Mono"`;
     for (const cell of this.parent.cells) {
       if (
         cellScreenRange.x0 > cell.x ||
@@ -215,6 +220,10 @@ export default class GridCanvas {
 
       ctx.fillStyle = color;
       ctx.fillRect(l - 1, u - 1, r - l + 1, d - u + 1);
+      if (cell.text !== "") {
+        ctx.fillStyle = "#2228";
+        ctx.fillText(cell.text, l + fontSize / 2, d - fontSize / 2);
+      }
     }
 
     ctx.globalAlpha = 0.03;
@@ -233,7 +242,6 @@ export default class GridCanvas {
       const { x: l, y: u } = this.gridPos2CanvasPos(x - 0.5, y - 0.5);
       const { x: r, y: d } = this.gridPos2CanvasPos(x + 0.5, y + 0.5);
       
-      if (this.parent.locked) ctx.setLineDash(GridCanvas.dotStyle);
       ctx.rect(l, u, r - l, d - u);
     }
     ctx.stroke();

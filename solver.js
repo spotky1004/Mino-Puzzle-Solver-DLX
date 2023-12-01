@@ -175,7 +175,7 @@ function initSets(board, pieceDatas) {
             for (let i = 0; i < piece.count; i++) {
               set[pieceCountAcc + i] = 1;
               sets.push([...set]);
-              setsData.push([piece, i + 1]);
+              setsData.push([piece, ["▲", "◆", "⬟", "⬢", "●", "△", "□", "⬠", "⬡", "◭", "🌲"][i]]);
               set[pieceCountAcc + i] = 0;
             }
             seenSets.add(setBin);
@@ -287,7 +287,7 @@ function* dlx(sets, pieceCountSum) {
 
     for (let head = root.r; head !== root; head = head.r) {
       if (head.size === 0) {
-        if (head.setIdx >= pieceCountSum) return -1;
+        if (head.setIdx > pieceCountSum) return -1;
         continue;
       }
       if (head.size >= minHeadSize) continue;
@@ -302,7 +302,7 @@ function* dlx(sets, pieceCountSum) {
    * @param {Node} head 
    */
   function cover(head) {
-    if (head.setIdx >= pieceCountSum) coveredCount++;
+    if (head.setIdx > pieceCountSum) coveredCount++;
     head.l.r = head.r;
     head.r.l = head.l;
 
@@ -319,7 +319,7 @@ function* dlx(sets, pieceCountSum) {
    * @param {Node} head 
    */
   function uncover(head) {
-    if (head.setIdx >= pieceCountSum) coveredCount--;
+    if (head.setIdx > pieceCountSum) coveredCount--;
     head.l.r = head;
     head.r.l = head;
 
@@ -334,6 +334,7 @@ function* dlx(sets, pieceCountSum) {
 
   let depth = -1;
   const minHeads = [];
+  /** @type {Node[]} */
   const selectedNodes = [];
   const covered = [];
   let boardCellCount = setLen - pieceCountSum;
@@ -343,9 +344,6 @@ function* dlx(sets, pieceCountSum) {
   loop: while (true) {
     iterCount++;
     depth++;
-    if (coveredCount === boardCellCount) {
-      yield [coveredCount, selectedNodes, iterCount];
-    }
 
     const minHead = findMinHead();
     if (minHead === -1) {
