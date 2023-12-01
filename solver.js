@@ -283,14 +283,13 @@ function* dlx(sets, pieceCountSum) {
   const root = setsTable[0][0];
   function findMinHead() {
     /** @type {Node | -1} */
-    let minHead = -1;
-    let minHeadSize = Infinity;
+    let minHead = root.l;
+    let minHeadSize = root.l.size;
+    if (minHead === root) return -1;
 
-    for (let head = root.r; head !== root; head = head.r) {
-      if (head.size === 0) {
-        if (head.setIdx > pieceCountSum) return -1;
-        continue;
-      }
+    for (let head = root.l; head !== root; head = head.l) {
+      if (head.setIdx <= pieceCountSum) break;
+      if (head.size === 0) return -1;
       if (head.size >= minHeadSize) continue;
       minHead = head;
       minHeadSize = head.size;
@@ -347,7 +346,7 @@ function* dlx(sets, pieceCountSum) {
     depth++;
 
     const minHead = findMinHead();
-    if (minHead === -1) {
+    if (minHead === -1 || minHead === root || root.r === root) {
       depth--;
       if (depth === -1) {
         yield -1;
@@ -392,7 +391,7 @@ function* dlx(sets, pieceCountSum) {
     covered.push(-1);
     covered.push(minHead);
     cover(minHead);
-    for (let node = selected.r; node !== selected; node = node.r) {
+    for (let node = selected.r; node !== selected && node !== root; node = node.r) {
       covered.push(node.top);
       cover(node.top);
     }

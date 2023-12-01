@@ -3,7 +3,7 @@ import PieceList from "./PieceList.js";
 import els from "./els.js";
 import solver from "./solver.js";
 
-let isDev = false;
+const isDev = false;
 
 const mainGrid = new Grid(els.mainGrid, "#d6eda8");
 mainGrid.canvas.zoom = 10;
@@ -89,6 +89,7 @@ async function solveLoop() {
       return;
     }
     const [coverCount, nodes, iterCount] = result;
+    maxCover = coverCount;
     els.status.iteration.innerText = `#${iterCount}`;
     els.status.elapsedTime.innerText = `${new Date().getTime() - startTime}ms`;
     els.status.maximumCover.innerText = `${maxCover} / ${gridCellCount}`;
@@ -101,7 +102,6 @@ async function solveLoop() {
     }
     if (maxCover >= coverCount && gridCellCount !== coverCount) continue;
 
-    maxCover = coverCount;
     stopTime = new Date().getTime();
     display(nodes);
     startTime += Math.max(0, new Date().getTime() - stopTime - 1);
